@@ -1,25 +1,46 @@
-var express = require('express'),
-	bodyParser = require('body-parser'),
-	oauthserver = require('oauth2-server');
+const express = require('express')
+const bodyParser = require('body-parser')
+const oauthserver = require('oauth2-server')
+const myInfoApi = require('./api')
 
-var app = express();
+const app = express();
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 app.use(bodyParser.json());
 
 app.oauth = oauthserver({
-	model: require('./model.js'),
-	grants: ['password', 'client_credentials'],
-	debug: true
+    model: require('./model'),
+    grants: ['password', 'client_credentials'],
+    debug: true
 });
 
 app.all('/oauth/token', app.oauth.grant());
 
-app.get('/', app.oauth.authorise(), function (req, res) {
-	res.send('Congratulations, you are in a secret area!');
+app.get('/', app.oauth.authorise(), (req, res) => {
+    const purpose = 'demonstrating MyInfo APIs'
+    const state = 123
+    console.log(req.oauth.user)
+    res.redirect(myInfoApi.getAuthoriseUrl(state, purpose))
+});
+
+app.get('/callback', (req, res) => {
+    const data = req.query
+    myInfoApi.getTokenApi(data.code)
+        .then(token => myInfoApi.getPersonApi(token.access_token))
+        .then(person => {
+            // TODO 错误码的返回
+            res.send(person)
+        })
+        .catch(e => {
+            // TODO 错误码的返回
+            console.log(e.message)
+            res.send(e)
+        })
 });
 
 app.use(app.oauth.errorHandler());
 
-app.listen(3000);
+app.listen(3001);

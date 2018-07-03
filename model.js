@@ -1,7 +1,7 @@
 /**
  * Configuration.
  */
-
+// TODO client的管理
 var config = {
 	clients: [{
 		clientId: 'application',
@@ -24,7 +24,6 @@ var config = {
  */
 
 var dump = function() {
-
 	console.log('clients', config.clients);
 	console.log('confidentialClients', config.confidentialClients);
 	console.log('tokens', config.tokens);
