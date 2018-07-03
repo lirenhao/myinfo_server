@@ -4,7 +4,7 @@ var fetch = require('node-fetch')
 var app = express()
 
 app.get('/', (req, res) => {
-    fetch('http://confidentialApplication:topSecret@localhost:3001/oauth/token', {
+    fetch('http://application1:secret1@localhost:3001/oauth/token', {
         method: 'POST', 
         body: 'grant_type=client_credentials',
         headers: {
