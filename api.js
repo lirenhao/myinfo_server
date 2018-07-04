@@ -5,11 +5,10 @@ const URLSearchParams = require('url-search-params')
 const myInfoConfig = require('config').get('L2')
 const securityHelper = require('./security')
 
-function getAuthoriseUrl(clientId, purpose) {
-    const state = clientId
+function getAuthoriseUrl(state, purpose, attributes) {
     return myInfoConfig.authApiUrl +
         "?client_id=" + myInfoConfig.clientId +
-        "&attributes=" + myInfoConfig.attributes +
+        "&attributes=" + attributes +
         "&purpose=" + purpose +
         "&state=" + state +
         "&redirect_uri=" + myInfoConfig.redirectUrl;
@@ -76,7 +75,7 @@ async function getTokenApi(code) {
     })
 }
 
-async function getPersonApi(accessToken) {
+async function getPersonApi(accessToken, attributes) {
     const decoded = securityHelper.verifyJWS(accessToken, myInfoConfig.publicKey);
     if (decoded == undefined || decoded == null) {
         return Promise.reject({
@@ -102,7 +101,7 @@ async function getPersonApi(accessToken) {
     // assemble params for Person API
     // t2step6 PASTE CODE BELOW
     const strParams = "client_id=" + myInfoConfig.clientId +
-        "&attributes=" + myInfoConfig.attributes;
+        "&attributes=" + attributes;
     const params = querystring.parse(strParams);
 
     // assemble headers for Person API

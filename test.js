@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
         .then(res => res.json())
         .then(data => {
             console.log(data)
-            res.redirect(`http://localhost:3001?access_token=${data.access_token}`)
+            res.redirect(`http://localhost:3001?access_token=${data.access_token}&templateId=temp1`)
         })
 })
 
