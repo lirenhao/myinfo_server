@@ -9,8 +9,7 @@
     "authLevel": "L0",
     "authApiUrl": "https://myinfosgstg.api.gov.sg/dev/v1/authorise",
     "tokenApiUrl": "https://myinfosgstg.api.gov.sg/dev/v1/token",
-    "personApiUrl": "https://myinfosgstg.api.gov.sg/dev/v1/person",
-    "attributes": "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,assessableincome,hanyupinyinname,aliasname,hanyupinyinaliasname,marriedname,cpfcontributions,cpfbalances"
+    "personApiUrl": "https://myinfosgstg.api.gov.sg/dev/v1/person"
   },
   "L2": {
     "privateKey": "./ssl/testapp_private.pem",
@@ -22,7 +21,6 @@
     "authLevel": "L2",
     "authApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/authorise",
     "tokenApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/token",
-    "personApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/person",
-    "attributes": "name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,assessableincome,hanyupinyinname,aliasname,hanyupinyinaliasname,marriedname,cpfcontributions,cpfbalances"
+    "personApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/person"
   }
 }
