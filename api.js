@@ -5,7 +5,8 @@ const URLSearchParams = require('url-search-params')
 const myInfoConfig = require('config').get('L2')
 const securityHelper = require('./security')
 
-function getAuthoriseUrl(state, purpose) {
+function getAuthoriseUrl(clientId, purpose) {
+    const state = clientId
     return myInfoConfig.authApiUrl +
         "?client_id=" + myInfoConfig.clientId +
         "&attributes=" + myInfoConfig.attributes +
@@ -167,13 +168,16 @@ async function getPersonApi(accessToken) {
                                 return Promise.reject({
                                     status: "ERROR",
                                     msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
-                                });
+                                })
                             personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
                             console.log("Person Data (Decoded/Decrypted):");
                             console.log(JSON.stringify(personData));
                             // successful. return data back to frontend
-                            return personData;
+                            return {
+                                status: "SUCCESS",
+                                msg: personData
+                            }
                         })
                 } else {
                     return Promise.reject({

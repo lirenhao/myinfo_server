@@ -1,7 +1,13 @@
-var express = require('express')
-var fetch = require('node-fetch')
+const express = require('express')
+const fetch = require('node-fetch')
+const jwt = require('jsonwebtoken')
 
-var app = express()
+const app = express()
+
+const client = {
+    clientId: 'application1',
+    clientSecret: 'secret1'
+}
 
 app.get('/', (req, res) => {
     fetch('http://application1:secret1@localhost:3001/oauth/token', {
@@ -20,8 +26,8 @@ app.get('/', (req, res) => {
 })
 
 app.get('/callback', (req, res) => {
-    const data = req.query
-    res.send(data)
+    const token = req.query.data
+    res.send(jwt.verify(token, client.clientSecret))
 })
 
 app.listen(3000);

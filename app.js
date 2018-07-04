@@ -1,7 +1,9 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const oauthServer = require('oauth2-server')
+const jwt = require('jsonwebtoken')
 const myInfoApi = require('./api')
+const clients = require('./clients.json')
 
 const app = express();
 
@@ -20,26 +22,31 @@ app.oauth = oauthServer({
 app.all('/oauth/token', app.oauth.grant());
 
 app.get('/', app.oauth.authorise(), (req, res) => {
-    const purpose = 'demonstrating MyInfo APIs'
-    const state = 123
-    console.log(req.user)
-    res.redirect(myInfoApi.getAuthoriseUrl(state, purpose))
+    const user = req.user
+    res.redirect(myInfoApi.getAuthoriseUrl(user.clientId, user.purpose))
 });
 
 app.get('/callback', (req, res) => {
     const data = req.query
-    myInfoApi.getTokenApi(data.code)
-        .then(token => myInfoApi.getPersonApi(token.access_token))
-        .then(person => {
-            // TODO 错误码的返回
-
-            res.send(person)
+    const users = clients.filter(item => item.clientId === data.state)
+    if (!users.length) {
+        res.send({
+            status: "ERROR",
+            msg: "NO CLIENT INFORMATION"
         })
-        .catch(e => {
-            // TODO 错误码的返回
-            console.log(e.message)
-            res.send(e)
-        })
+    } else {
+        const user = users[0]
+        myInfoApi.getTokenApi(data.code)
+            .then(token => myInfoApi.getPersonApi(token.access_token))
+            .then(message => {
+                // TODO 错误码的返回
+                res.redirect(`${user.redirectUrl}?data=${jwt.sign(message, user.clientSecret)}`)
+            })
+            .catch(e => {
+                // TODO 错误码的返回
+                res.redirect(`${user.redirectUrl}?data=${jwt.sign(e, user.clientSecret)}`)
+            })
+    }
 });
 
 app.use(app.oauth.errorHandler());
