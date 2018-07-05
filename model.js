@@ -1,104 +1,119 @@
-/**
- * Configuration.
- */
-var clients = require('./clients.json')
-var config = {
-	clients,
-	tokens: []
-};
+const jwt = require('jsonwebtoken')
+const clientsSource = require('./clients.json')
+const oauthConfig = require('config').get('oauth')
+
+const getClientById = function (clientId) {
+
+	const clients = clientsSource.filter(function (client) {
+
+		return client.clientId === clientId
+	})
+
+	return clients.length ? clients[0] : null;
+}
+
+const getClientByIdAndSecret = function (clientId, clientSecret) {
+
+	const clients = clientsSource.filter(function (client) {
+
+		return client.clientId === clientId && client.clientSecret === clientSecret
+	})
+
+	return clients.length ? clients[0] : null;
+}
 
 /**
  * Dump the memory storage content (for debug).
  */
-
-var dump = function () {
-	console.log('clients', config.clients);
-	console.log('tokens', config.tokens);
-};
-
-/*
- * Methods used by all grant types.
- */
-
-var getAccessToken = function (bearerToken, callback) {
-
-	var tokens = config.tokens.filter(function (token) {
-
-		return token.accessToken === bearerToken;
-	});
-
-	return callback(false, tokens[0]);
-};
-
-var getClient = function (clientId, clientSecret, callback) {
-
-	var clients = config.clients.filter(function (client) {
-
-		return client.clientId === clientId && client.clientSecret === clientSecret;
-	});
-
-	callback(false, clients[0]);
-};
-
-var grantTypeAllowed = function (clientId, grantType, callback) {
-
-	var clientsSource,
-		clients = [];
-
-	if (grantType === 'client_credentials') {
-		clientsSource = config.clients;
-	}
-
-	if (!!clientsSource) {
-		clients = clientsSource.filter(function (client) {
-
-			return client.clientId === clientId;
-		});
-	}
-
-	callback(false, clients.length);
-};
-
-var saveAccessToken = function (accessToken, clientId, expires, user, callback) {
-
-	config.tokens.push({
-		accessToken: accessToken,
-		expires: expires,
-		clientId: clientId,
-		user: user
-	});
-
-	callback(false);
-};
-
-/*
- * Method used only by client_credentials grant type.
- */
-
-var getUserFromClient = function (clientId, clientSecret, callback) {
-
-	var clients = config.clients.filter(function (client) {
-
-		return client.clientId === clientId && client.clientSecret === clientSecret;
-	});
-
-	var user;
-
-	if (clients.length) {
-		user = clients[0];
-	}
-
-	callback(false, user);
-};
+const dump = function () {
+	console.log('clients', clients)
+}
 
 /**
- * Export model definition object.
+ * 生成token
  */
+const generateToken = function (type, req, callback) {
+
+	const expires = new Date()
+	expires.setSeconds(expires.getSeconds() + oauthConfig.expire)
+
+	const token = {
+		id: req.user.clientId,
+		exp: expires.getTime()
+	}
+
+	jwt.sign(token, oauthConfig.tokenSecret, function (err, encoded) {
+
+		if (err) {
+			return callback(err, false)
+		}
+
+		return callback(false, encoded)
+	})
+}
+
+/*
+ * 获取token
+ */
+const getAccessToken = function (bearerToken, callback) {
+
+	jwt.verify(bearerToken, oauthConfig.tokenSecret, function (err, decoded) {
+
+		if (err) {
+			return callback(err, false)
+		}
+
+		const expires = new Date()
+		expires.setTime(decoded.exp)
+
+		return callback(false, {
+			id: decoded.id,
+			expires
+		})
+	})
+}
+
+/*
+ * 保存token
+ * 做了jwt签名本地不需要保存token信息
+ */
+const saveAccessToken = function (accessToken, clientId, expires, user, callback) {
+
+	callback(false)
+}
+
+const grantTypeAllowed = function (clientId, grantType, callback) {
+
+	if (grantType === 'client_credentials') {
+
+		callback(false, getClientById(clientId))
+	} else {
+
+		callback(true)
+	}
+}
+
+/**
+ * 获取client信息
+ */
+const getClient = function (clientId, clientSecret, callback) {
+
+	callback(false, getClientByIdAndSecret(clientId, clientSecret))
+}
+
+/**
+ * 获取user信息从client
+ */
+const getUserFromClient = function (clientId, clientSecret, callback) {
+
+	callback(false, getClientByIdAndSecret(clientId, clientSecret))
+}
 
 module.exports = {
+	generateToken: generateToken,
 	getAccessToken: getAccessToken,
-	getClient: getClient,
-	grantTypeAllowed: grantTypeAllowed,
 	saveAccessToken: saveAccessToken,
+	grantTypeAllowed: grantTypeAllowed,
+	getClient: getClient,
 	getUserFromClient: getUserFromClient
-};
+}

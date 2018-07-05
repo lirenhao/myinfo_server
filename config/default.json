@@ -22,5 +22,10 @@
     "authApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/authorise",
     "tokenApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/token",
     "personApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/person"
+  },
+  "oauth" : {
+    "tokenSecret": "tokenSecret",
+    "stateSecret": "stateSecret",
+    "expire": 300
   }
 }

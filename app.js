@@ -5,37 +5,38 @@ const jwt = require('jsonwebtoken')
 const myInfoApi = require('./api')
 const clients = require('./clients.json')
 const template = require('./template.json')
+const oauthConfig = require('config').get('oauth')
 
-const app = express();
-const secret = 'secret'
+const app = express()
 
 app.use(bodyParser.urlencoded({
     extended: true
-}));
+}))
 
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
 app.oauth = oauthServer({
     model: require('./model'),
     grants: ['client_credentials'],
+    accessTokenLifetime: oauthConfig.expire,
     debug: true
-});
+})
 
-app.all('/oauth/token', app.oauth.grant());
+app.all('/oauth/token', app.oauth.grant())
 
 app.get('/', app.oauth.authorise(), (req, res) => {
     const user = req.user
     const state = jwt.sign({
         clientId: user.clientId,
         templateId: req.query.templateId
-    }, secret)
+    }, oauthConfig.stateSecret)
     const attributes = template[req.query.templateId]
     res.redirect(myInfoApi.getAuthoriseUrl(state, user.purpose, attributes))
-});
+})
 
 app.get('/callback', (req, res) => {
     const data = req.query
-    const state = jwt.verify(data.state, secret)
+    const state = jwt.verify(data.state, oauthConfig.stateSecret)
     const users = clients.filter(item => item.clientId === state.clientId)
     const attributes = template[state.templateId]
     if (!users.length) {
@@ -56,8 +57,8 @@ app.get('/callback', (req, res) => {
                 res.redirect(`${user.redirectUrl}?data=${jwt.sign(e, user.clientSecret)}`)
             })
     }
-});
+})
 
-app.use(app.oauth.errorHandler());
+app.use(app.oauth.errorHandler())
 
-app.listen(3001);
+app.listen(3001)
