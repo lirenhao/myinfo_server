@@ -37,12 +37,7 @@ const generateToken = function (type, req, callback) {
 	const expires = new Date()
 	expires.setSeconds(expires.getSeconds() + oauthConfig.expire)
 
-	const token = {
-		id: req.user.clientId,
-		exp: expires.getTime()
-	}
-
-	jwt.sign(token, oauthConfig.tokenSecret, function (err, encoded) {
+	jwt.sign(req.user.clientId + ':' + expires.getTime(), oauthConfig.tokenSecret, function (err, encoded) {
 
 		if (err) {
 			return callback(err, false)
@@ -63,11 +58,13 @@ const getAccessToken = function (bearerToken, callback) {
 			return callback(err, false)
 		}
 
+		const data = decoded.split(':')
+
 		const expires = new Date()
-		expires.setTime(decoded.exp)
+		expires.setTime(data[1])
 
 		return callback(false, {
-			id: decoded.id,
+			user: getClientById(data[0]),
 			expires
 		})
 	})

@@ -18,8 +18,7 @@ app.use(bodyParser.json())
 app.oauth = oauthServer({
     model: require('./model'),
     grants: ['client_credentials'],
-    accessTokenLifetime: oauthConfig.expire,
-    debug: true
+    accessTokenLifetime: oauthConfig.expire
 })
 
 app.all('/oauth/token', app.oauth.grant())
