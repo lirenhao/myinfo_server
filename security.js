@@ -66,8 +66,8 @@ function generateSHA256withRSAHeader(url, params, method, strContentType, appId,
   // iii) concatenate request elements (HTTP method + url + base string parameters)
   var baseString = method.toUpperCase() + "&" + url + "&" + baseParamsStr;
 
-  console.log("Base String:".green);
-  console.log(baseString);
+  // console.log("Base String:");
+  // console.log(baseString);
 
   // C) Signing Base String to get Digital Signature
   var signWith = {
@@ -129,13 +129,13 @@ security.verifyJWS = function verifyJWS(jws, publicCert) {
 
 // Decrypt JWE using private key
 security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, tag, privateKey) {
-  console.log("Decrypting JWE" + " (Format: " + "header" + "." + "encryptedKey" + "." + "iv" + "." + "cipherText" + "." + "tag" + ")");
-  console.log(header + "." + encryptedKey + "." + iv + "." + cipherText + "." + tag);
+  // console.log("Decrypting JWE" + " (Format: " + "header" + "." + "encryptedKey" + "." + "iv" + "." + "cipherText" + "." + "tag" + ")");
+  // console.log(header + "." + encryptedKey + "." + iv + "." + cipherText + "." + tag);
   return new Promise((resolve, reject) => {
 
     var keystore = jose.JWK.createKeyStore();
 
-    console.log((new Buffer(header,'base64')).toString('ascii'));
+    // console.log((new Buffer(header,'base64')).toString('ascii'));
 
     var data = {
       "type": "compact",
@@ -161,7 +161,7 @@ security.decryptJWE = function decryptJWE(header, encryptedKey, iv, cipherText, 
 
   })
   .catch (error => {
-    console.error("Error with decrypting JWE: %s", error);
+    // console.error("Error with decrypting JWE: %s", error);
     throw "Error with decrypting JWE";
   })
 }

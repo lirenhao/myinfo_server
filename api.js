@@ -52,8 +52,8 @@ async function getTokenApi(code) {
     }
     // t3step2a END PASTE CODE
 
-    console.log("Request Header for Token API:");
-    console.log(JSON.stringify(headers));
+    // console.log("Request Header for Token API:");
+    // console.log(JSON.stringify(headers));
 
     const formParams = new URLSearchParams()
     formParams.append('grant_type', 'authorization_code')
@@ -84,8 +84,8 @@ async function getPersonApi(accessToken, attributes) {
         })
     }
 
-    console.log("Decoded Access Token:");
-    console.log(JSON.stringify(decoded));
+    // console.log("Decoded Access Token:");
+    // console.log(JSON.stringify(decoded));
 
     const uinfin = decoded.sub;
     if (uinfin == undefined || uinfin == null) {
@@ -129,9 +129,9 @@ async function getPersonApi(accessToken, attributes) {
         _.set(headers, "Authorization", "Bearer " + accessToken);
     }
 
-    console.log("Request Header for Person API:");
-    console.log(JSON.stringify(headers));
-    console.log("Sending Person Request >>>");
+    // console.log("Request Header for Person API:");
+    // console.log(JSON.stringify(headers));
+    // console.log("Sending Person Request >>>");
 
     return fetch(url + '?' + strParams, {
             method: 'GET',
@@ -139,7 +139,6 @@ async function getPersonApi(accessToken, attributes) {
         })
         .then(res => res.text())
         .then(personData => {
-            // TODO 错误码的返回
             if (personData == undefined || personData == null) {
                 return Promise.reject({
                     status: "ERROR",
@@ -150,13 +149,13 @@ async function getPersonApi(accessToken, attributes) {
                     personData = JSON.parse(personData);
                     personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
-                    console.log("Person Data :");
-                    console.log(JSON.stringify(personData));
+                    // console.log("Person Data :");
+                    // console.log(JSON.stringify(personData));
                     // successful. return data back to frontend
                     return personData;
                 } else if (myInfoConfig.authLevel === "L2") {
-                    console.log("Response from Person API:");
-                    console.log(personData);
+                    // console.log("Response from Person API:");
+                    // console.log(personData);
                     //t3step3 PASTE CODE BELOW
                     // header.encryptedKey.iv.ciphertext.tag
                     const jweParts = personData.split(".");
@@ -170,8 +169,8 @@ async function getPersonApi(accessToken, attributes) {
                                 })
                             personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
-                            console.log("Person Data (Decoded/Decrypted):");
-                            console.log(JSON.stringify(personData));
+                            // console.log("Person Data (Decoded/Decrypted):");
+                            // console.log(JSON.stringify(personData));
                             // successful. return data back to frontend
                             return {
                                 status: "SUCCESS",

@@ -47,12 +47,12 @@ app.get('/callback', (req, res) => {
         const user = users[0]
         myInfoApi.getTokenApi(data.code)
             .then(token => myInfoApi.getPersonApi(token.access_token, attributes))
-            .then(message => {
-                // TODO 错误码的返回
-                res.redirect(`${user.redirectUrl}?data=${jwt.sign(message, user.clientSecret)}`)
+            .then(data => {
+                // Myinfo平台接口记录来源系统、使用目的、客户NRIC/FIN, 提取数据的栏位名、提取时间
+                console.log(`Client:${user.clientId}\nPurpose:${user.purpose}\nNRIC:${data.msg.uinfin}\nAttributes:${attributes}`)
+                res.redirect(`${user.redirectUrl}?data=${jwt.sign(data, user.clientSecret)}`)
             })
             .catch(e => {
-                // TODO 错误码的返回
                 res.redirect(`${user.redirectUrl}?data=${jwt.sign(e, user.clientSecret)}`)
             })
     }
