@@ -5,7 +5,8 @@ module.exports = {
     instances: "max",
     exec_mode: "cluster",
     watch: [
-      "clients.json"
+      "clients.json",
+      "template.json"
     ],
     error_file: "err.log",
     out_file: "out.log",
