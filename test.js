@@ -10,14 +10,14 @@ const client = {
 }
 
 app.get('/', (req, res) => {
-    fetch('http://application1:secret1@localhost:3001/oauth/token', {
-        method: 'POST', 
-        body: 'grant_type=client_credentials',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json'
-        }
-    })
+    fetch('http://localhost:3001/oauth/token', {
+            method: 'POST',
+            body: 'grant_type=client_credentials',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': 'Basic YXBwbGljYXRpb24xOnNlY3JldDE='
+            }
+        })
         .then(res => res.json())
         .then(data => {
             console.log(data)
