@@ -24,7 +24,7 @@
 
 - 接口地址  
     ```
-    http://localhost:3001/oauth/token
+    https://{domainName}/oauth/token
     ```
 
 - 接口使用  
@@ -35,7 +35,7 @@
 
         * **Content-Type**: `application/x-www-form-urlencoded`
 
-    * **Body**
+    * **Body**  
         * `grant_type=client_credentials`
 
     使用`curl`的事例:
@@ -67,12 +67,12 @@
 
 ### Myinfo调用接口  
 
-接口是get请求需要`access_token`、`templateId`两个参数  
+接口是get请求需要`access_token`、`templateId`、`state`三个参数  
 
 - 接口地址  
 
     ```
-    http://localhost:3001
+    https://{domainName}/
     ```
 
 - 参数说明  
@@ -478,3 +478,66 @@ data参数解密后参数事例:
 | ERROR | INVALID DATA OR SIGNATURE FOR PERSON DATA | User's person data decrypt failure |
 
 注:当系统在向Myinfo请求数据发生网络异常时，将直接返回异常信息不再返回json格式数据
+
+## 附录  
+
+### 附录1：Myinfo能获取的信息  
+
+| attributes           | remarks                                    |
+| -------------------- | ------------------------------------------ |
+| name                 | Full Name                                  |
+| hanyupinyinname      | Han Yu Pin Yin name                        |
+| aliasname            | Alias name                                 |
+| hanyupinyinaliasname | Han Yu Pin Yin Alias name                  |
+| marriedname          | Married name                               |
+| sex                  | Sex                                        |
+| race                 | Race                                       |
+| secondaryrace        | Secondary Race                             |
+| dialect              | Dialect                                    |
+| nationality          | Nationality                                |
+| dob                  | Date of Birth                              |
+| birthcountry         | Country of Birth                           |
+| residentialstatus    | Residential Status                         |
+| passportnumber       | Passport Number                            |
+| passportexpirydate   | Passport Expiry Date                       |
+| regadd               | Registered Address                         |
+| mailadd              | Mailing Address                            |
+| billadd              | Billing Address                            |
+| housingtype          | Housing Type                               |
+| hdbtype              | HDB Type                                   |
+| ownerprivate         | Ownership of Private Property Status       |
+| email                | Email Address                              |
+| homeno               | Home Contact Number                        |
+| mobileno             | Mobile Number                              |
+| marital              | Marital Status                             |
+| marriagecertno       | Certificate number of the latest marriage  |
+| countryofmarriage    | Country of the latest marriage             |
+| marriagedate         | Latest Marriage Date                       |
+| divorcedate          | Last Divorce Date                          |
+| childrenbirthrecords | Details of Children Birth Records          |
+| relationships        | Details of Relationships                   |
+| edulevel             | Highest Education Level                    |
+| gradyear             | Year of Graduation                         |
+| schoolname           | Name of School                             |
+| occupation           | Occupation                                 |
+| employment           | Employer's Name                            |
+| workpassstatus       | Pass status of a FIN holder                |
+| workpassexpirydate   | Pass expiry of a foreigner                 |
+| householdincome      | Household Income                           |
+| assessableincome     | Latest Assessable Income                   |
+| assessyear           | Year of Assessment (for Assessable Income) |
+| cpfcontributions     | Employer CPF Contributions                 |
+| cpfbalances          | CPF Balances                               |
+| vehno                | Vehicle Number                             |
+
+### 附录2：Myinfo停机维护时间  
+
+| Production Environment                                       | Sandbox & Staging Environments |
+| ------------------------------------------------------------ | ------------------------------ |
+| CPFB data - Everyday 5:00am to 5:30am                        | Every Wednesday 3pm to 12am.   |
+| IRAS data - Every Wed, 2:00am to 6:00am, Every Sun, 2:00am to 8:30am |                                |
+| Once a month, Sunday 12:00 am to 8:00 am (date to be advised) |                                |
+
+注：具体时间以Myinfo官网为准
+
+
