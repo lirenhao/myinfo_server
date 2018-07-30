@@ -70,7 +70,10 @@ async function getTokenApi(code) {
         if (res.status === 200) {
             return Promise.resolve(res.json())
         } else {
-            return Promise.reject(res.text())
+            return Promise.reject({
+                status: "ERROR",
+                msg: 'Myinfo Authorization error'
+            })
         }
     })
 }
