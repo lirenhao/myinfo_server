@@ -6,6 +6,7 @@ const myInfoApi = require('./api');
 const clients = require('./clients.json');
 const template = require('./template.json');
 const oauthConfig = require('config').get('oauth');
+const emitter = require('./emitter')
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.get('/', app.oauth.authorise(), (req, res) => {
         oauthConfig.stateSecret
     );
     const attributes = template[req.query.templateId];
+    emitter.emit('token', req.query.state)
     res.redirect(myInfoApi.getAuthoriseUrl(state, user.purpose, attributes));
 });
 
@@ -56,9 +58,12 @@ app.get('/callback', (req, res) => {
             .then(token => myInfoApi.getPersonApi(token.access_token, attributes))
             .then(data => {
                 // Myinfo平台接口记录来源系统、使用目的、客户NRIC/FIN, 提取数据的栏位名、提取时间
-                console.log(
-                    `Client:${user.clientId}\nPurpose:${user.purpose}\nNRIC:${data.msg.uinfin}\nAttributes:${attributes}`
-                );
+                emitter.emit('person', {
+                    client: user.clientId,
+                    purpose: user.purpose,
+                    nric: data.msg.uinfin,
+                    attributes
+                })
                 res.redirect(
                     `${user.redirectUrl}?state=${state.state}&data=${jwt.sign (data, user.clientSecret)}`
                 );
