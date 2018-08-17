@@ -4,6 +4,7 @@ const fetch = require('node-fetch')
 const URLSearchParams = require('url-search-params')
 const myInfoConfig = require('config').get('L2')
 const securityHelper = require('./security')
+const emitter = require('./emitter')
 
 function getAuthoriseUrl(state, purpose, attributes) {
     return myInfoConfig.authApiUrl +
@@ -70,6 +71,11 @@ async function getTokenApi(code) {
         if (res.status === 200) {
             return Promise.resolve(res.json())
         } else {
+            emitter.emit('warn', {
+                status: res.status,
+                msg: res.statusText,
+                url: res.url
+            })
             return Promise.reject({
                 status: "ERROR",
                 msg: 'Myinfo Authorization error'
@@ -81,6 +87,7 @@ async function getTokenApi(code) {
 async function getPersonApi(accessToken, attributes) {
     const decoded = securityHelper.verifyJWS(accessToken, myInfoConfig.publicKey);
     if (decoded == undefined || decoded == null) {
+        emitter.emit('warn', 'Invalid token, Not find Access Token')
         return Promise.reject({
             status: "ERROR",
             msg: "INVALID TOKEN"
@@ -92,6 +99,7 @@ async function getPersonApi(accessToken, attributes) {
 
     const uinfin = decoded.sub;
     if (uinfin == undefined || uinfin == null) {
+        emitter.emit('warn', 'Not find Uinfin')
         return Promise.reject({
             status: "ERROR",
             msg: "UINFIN NOT FOUND"
@@ -99,7 +107,6 @@ async function getPersonApi(accessToken, attributes) {
     }
     const url = myInfoConfig.personApiUrl + "/" + uinfin + "/";
     const cacheCtl = "no-cache";
-    Promise.reject
     const method = "GET";
     // assemble params for Person API
     // t2step6 PASTE CODE BELOW
@@ -143,6 +150,7 @@ async function getPersonApi(accessToken, attributes) {
         .then(res => res.text())
         .then(personData => {
             if (personData == undefined || personData == null) {
+                emitter.emit('warn', 'Not found person data')
                 return Promise.reject({
                     status: "ERROR",
                     msg: "PERSON DATA NOT FOUND"
@@ -165,11 +173,12 @@ async function getPersonApi(accessToken, attributes) {
 
                     return securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], myInfoConfig.privateKey)
                         .then(personData => {
-                            if (personData == undefined || personData == null)
-                                return Promise.reject({
-                                    status: "ERROR",
-                                    msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
-                                })
+                            if (personData === undefined || personData == null)
+                                emitter.emit('warn', 'Invalid data or signature for person data')
+                            return Promise.reject({
+                                status: "ERROR",
+                                msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
+                            })
                             personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
                             // console.log("Person Data (Decoded/Decrypted):");
@@ -181,6 +190,7 @@ async function getPersonApi(accessToken, attributes) {
                             }
                         })
                 } else {
+                    emitter.emit('warn', 'Unknown Auth Level')
                     return Promise.reject({
                         status: "ERROR",
                         msg: "Unknown Auth Level"

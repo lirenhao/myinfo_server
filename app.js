@@ -47,6 +47,7 @@ app.get('/callback', (req, res) => {
     const users = clients.filter(item => item.clientId === state.clientId);
     const attributes = template[state.templateId];
     if (!users.length) {
+        emitter.emit('warn', `Not find client[${state.clientId}]`);
         res.send({
             status: 'ERROR',
             msg: 'NO CLIENT INFORMATION',
