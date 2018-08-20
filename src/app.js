@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const oauthServer = require('oauth2-server');
 const jwt = require('jsonwebtoken');
 const myInfoApi = require('./api');
-const clients = require('../data/clients.json');
-const template = require('../data/template.json');
+const getClients = require('./data').getClients;
+const getTemplate = require('./data').getTemplate;
 const oauthConfig = require('config').get('oauth');
 const emitter = require('./emitter')
 
@@ -36,7 +36,7 @@ app.get('/', app.oauth.authorise(), (req, res) => {
         },
         oauthConfig.stateSecret
     );
-    const attributes = template[req.query.templateId];
+    const attributes = getTemplate()[req.query.templateId];
     emitter.emit('token', req.query.state)
     res.redirect(myInfoApi.getAuthoriseUrl(state, user.purpose, attributes));
 });
@@ -44,8 +44,8 @@ app.get('/', app.oauth.authorise(), (req, res) => {
 app.get('/callback', (req, res) => {
     const data = req.query;
     const state = jwt.verify(data.state, oauthConfig.stateSecret);
-    const users = clients.filter(item => item.clientId === state.clientId);
-    const attributes = template[state.templateId];
+    const users = getClients().filter(item => item.clientId === state.clientId);
+    const attributes = getTemplate()[state.templateId];
     if (!users.length) {
         emitter.emit('warn', `Not find client[${state.clientId}]`);
         res.send({

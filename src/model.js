@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken')
-const clientsSource = require('../data/clients.json')
+const getClients = require('./data').getClients
 const oauthConfig = require('config').get('oauth')
 
 const getClientById = function (clientId) {
 
-	const clients = clientsSource.filter(function (client) {
+	const clients = getClients().filter(function (client) {
 
 		return client.clientId === clientId
 	})
@@ -14,7 +14,7 @@ const getClientById = function (clientId) {
 
 const getClientByIdAndSecret = function (clientId, clientSecret) {
 
-	const clients = clientsSource.filter(function (client) {
+	const clients = getClients().filter(function (client) {
 
 		return client.clientId === clientId && client.clientSecret === clientSecret
 	})

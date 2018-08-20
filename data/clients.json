@@ -1,5 +1,4 @@
-[
-    {
+[{
         "clientId": "application1",
         "clientSecret": "secret1",
         "redirectUrl": "http://localhost:3000/callback",
