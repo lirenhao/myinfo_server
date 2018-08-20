@@ -4,7 +4,7 @@ COPY ./ /opt/myinfo
 
 WORKDIR /opt/myinfo
 
-VOLUME /opt/myinfo/log
+VOLUME /opt/myinfo/logs
 
 RUN npm install -g pm2 && pm2 install pm2-logrotate && npm install
 

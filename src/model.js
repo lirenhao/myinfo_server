@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const clientsSource = require('./clients.json')
+const clientsSource = require('../data/clients.json')
 const oauthConfig = require('config').get('oauth')
 
 const getClientById = function (clientId) {

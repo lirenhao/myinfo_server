@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const oauthServer = require('oauth2-server');
 const jwt = require('jsonwebtoken');
 const myInfoApi = require('./api');
-const clients = require('./clients.json');
-const template = require('./template.json');
+const clients = require('../data/clients.json');
+const template = require('../data/template.json');
 const oauthConfig = require('config').get('oauth');
 const emitter = require('./emitter')
 

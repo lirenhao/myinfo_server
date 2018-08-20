@@ -1,5 +1,7 @@
 .idea
 .vscode
 node_modules
+logs
 *.log
+*.pid
 package-lock.json
