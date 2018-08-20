@@ -173,12 +173,13 @@ async function getPersonApi(accessToken, attributes) {
 
                     return securityHelper.decryptJWE(jweParts[0], jweParts[1], jweParts[2], jweParts[3], jweParts[4], myInfoConfig.privateKey)
                         .then(personData => {
-                            if (personData === undefined || personData == null)
+                            if (personData === undefined || personData == null) {
                                 emitter.emit('warn', 'Invalid data or signature for person data')
-                            return Promise.reject({
-                                status: "ERROR",
-                                msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
-                            })
+                                return Promise.reject({
+                                    status: "ERROR",
+                                    msg: "INVALID DATA OR SIGNATURE FOR PERSON DATA"
+                                })
+                            }
                             personData.uinfin = uinfin; // add the uinfin into the data to display on screen
 
                             // console.log("Person Data (Decoded/Decrypted):");

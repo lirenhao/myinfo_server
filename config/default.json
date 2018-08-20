@@ -1,6 +1,6 @@
 {
   "L0": {
-    "privateKey": "./ssl/testapp_private.pem",
+    "privateKey": "./ssl/stg-myinfo-2018.pem",
     "publicKey": "./ssl/stg-auth-signing-public.pem",
     "clientId": "STG2-MYINFO-SELF-TEST",
     "clientSecret": "44d953c796cccebcec9bdc826852857ab412fbe2",
@@ -12,7 +12,7 @@
     "personApiUrl": "https://myinfosgstg.api.gov.sg/dev/v1/person"
   },
   "L2": {
-    "privateKey": "./ssl/testapp_private.pem",
+    "privateKey": "./ssl/stg-myinfo-2018.pem",
     "publicKey": "./ssl/stg-auth-signing-public.pem",
     "clientId": "STG2-MYINFO-SELF-TEST",
     "clientSecret": "44d953c796cccebcec9bdc826852857ab412fbe2",
@@ -23,7 +23,7 @@
     "tokenApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/token",
     "personApiUrl": "https://myinfosgstg.api.gov.sg/test/v2/person"
   },
-  "oauth" : {
+  "oauth": {
     "tokenSecret": "tokenSecret",
     "stateSecret": "stateSecret",
     "expire": 300
